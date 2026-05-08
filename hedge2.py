@@ -113,7 +113,28 @@ the "sci_queue" queue and transmits it via the XBee and the DMR radios.
 """
 
 def main():
-    gpsd.connect()
+    gnssConnected = False
+    gnssReady = False
+    while not gnssConnected:
+        try:
+            gpsd.connect()
+        except Exception as e:
+            print(e)
+            time.sleep(0.1)
+            pass
+        else:
+            gnssConnected = True
+            time.sleep(0.5)
+    while not gnssReady:
+        try:
+            gnss = gpsd.get_current()
+        except Exception as e:
+            print(e)
+            time.sleep(0.1)
+            pass
+        else:
+            gnssReady = True
+            time.sleep(0.5)
     sci_uart = serial.Serial(
         port='/dev/ttyAMA5', 
         baudrate=115200, 
